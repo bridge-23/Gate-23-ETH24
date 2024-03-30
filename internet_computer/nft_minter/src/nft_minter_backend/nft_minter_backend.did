@@ -3,4 +3,6 @@ service : {
     "eth_address" : () -> (text) query;
     "public_key" : () -> (variant { Ok : record { public_key_hex : text }; Err : text });
     "sign" : (text) -> (variant { Ok : record { signature_hex : text }; Err : text });
+    "get_canister_addr" : () -> (variant { Ok : text; Err : text });
+    "get_eth_balance" : (text) -> (variant { Ok : record { balance : text }; Err : text });
 };

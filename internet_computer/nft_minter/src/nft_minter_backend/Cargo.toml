@@ -18,3 +18,4 @@ hex = "0.4.3"
 sha2 = "0.10.6"
 k256 = { version = "0.12.0", features = ["ecdsa"] }
 getrandom = { version = "0.2", features = ["custom"] }
+ic-web3 = { git = "https://github.com/rocklabs-io/ic-web3" }
