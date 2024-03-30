@@ -16,6 +16,7 @@
     "src/nft_minter_frontend"
   ],
   "devDependencies": {
+    "typescript": "^5.4.3",
     "vite": "^5.2.7"
   },
   "dependencies": {
