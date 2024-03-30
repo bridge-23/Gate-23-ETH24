@@ -24,6 +24,13 @@ fn eth_address() -> String {
     "0x1234567890abcdef".to_string()
 }
 
+fn sha256(input: &String) -> [u8; 32] {
+    use sha2::Digest;
+    let mut hasher = sha2::Sha256::new();
+    hasher.update(input.as_bytes());
+    hasher.finalize().into()
+}
+
 #[ic_cdk::update]
 async fn public_key() -> Result<PublicKeyReply, String> {
     let request = ECDSAPublicKey {
@@ -39,6 +46,28 @@ async fn public_key() -> Result<PublicKeyReply, String> {
 
     Ok(PublicKeyReply {
         public_key_hex: hex::encode(&res.public_key),
+    })
+}
+
+#[update]
+async fn sign(message: String) -> Result<SignatureReply, String> {
+    let request = SignWithECDSA {
+        message_hash: sha256(&message).to_vec(),
+        derivation_path: vec![],
+        key_id: EcdsaKeyIds::TestKeyLocalDevelopment.to_key_id(),
+    };
+
+    let (response,): (SignWithECDSAReply,) = ic_cdk::api::call::call_with_payment(
+        mgmt_canister_id(),
+        "sign_with_ecdsa",
+        (request,),
+        25_000_000_000,
+    )
+    .await
+    .map_err(|e| format!("sign_with_ecdsa failed {}", e.1))?;
+
+    Ok(SignatureReply {
+        signature_hex: hex::encode(&response.signature),
     })
 }
 

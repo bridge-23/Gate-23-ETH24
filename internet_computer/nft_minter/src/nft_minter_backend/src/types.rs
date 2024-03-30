@@ -23,6 +23,23 @@ pub struct ECDSAPublicKeyReply {
     pub chain_code: Vec<u8>,
 }
 
+#[derive(CandidType, Serialize, Debug)]
+pub struct SignWithECDSA {
+    pub message_hash: Vec<u8>,
+    pub derivation_path: Vec<Vec<u8>>,
+    pub key_id: EcdsaKeyId,
+}
+
+#[derive(CandidType, Deserialize, Debug)]
+pub struct SignWithECDSAReply {
+    pub signature: Vec<u8>,
+}
+
+#[derive(CandidType, Serialize, Debug)]
+pub struct SignatureReply {
+    pub signature_hex: String,
+}
+
 #[derive(CandidType, Serialize, Debug, Clone)]
 pub enum EcdsaCurve {
     #[serde(rename = "secp256k1")]
