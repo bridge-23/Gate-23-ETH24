@@ -1,0 +1,38 @@
+{
+  "canisters": {
+    "internet_identity": {
+      "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
+      "frontend": {},
+      "remote": {
+        "id": {
+          "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai"
+        }
+      },
+      "type": "custom",
+      "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
+    },
+    "nft_minter_backend": {
+      "candid": "src/nft_minter_backend/nft_minter_backend.did",
+      "package": "nft_minter_backend",
+      "type": "rust"
+    },
+    "nft_minter_frontend": {
+      "dependencies": [
+        "nft_minter_backend"
+      ],
+      "source": [
+        "src/nft_minter_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "nft_minter_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}

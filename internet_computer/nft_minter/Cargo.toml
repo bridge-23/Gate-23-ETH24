@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "src/nft_minter_backend"
+]
+resolver = "2"

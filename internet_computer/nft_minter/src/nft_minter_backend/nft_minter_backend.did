@@ -1,0 +1,6 @@
+service : {
+    "greet" : (text) -> (text) query;
+    "eth_address" : () -> (text) query;
+    "public_key" : () -> (variant { Ok : record { public_key_hex : text }; Err : text });
+
+};
