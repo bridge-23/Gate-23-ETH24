@@ -10,7 +10,7 @@ function App() {
 
   useEffect(() => {
     (async () => {
-      const ethAddress = await nft_minter_backend.eth_address();
+      const ethAddress = await nft_minter_backend.get_canister_addr();
       setEthAddress(ethAddress);
       console.log(ethAddress);
 
@@ -59,6 +59,7 @@ function App() {
         <div id="principalId" className="mt-4 p-4 bg-gray-700 rounded-lg">Your PrincipalId: {principalId}</div>
         <section id="greeting" className="mt-4 text-lg font-semibold">{greeting}</section>
         {principalId && <UploadNFT />}
+        { `ETH address: 0x${ethAddress.Ok}`}
       </div>
     </main>
   );
