@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AuthClient } from '@dfinity/auth-client';
 import { nft_minter_backend } from 'declarations/nft_minter_backend';
+import UploadNFT from './services/UploadNFT';
 
 function App() {
   const [greeting, setGreeting] = useState('');
@@ -57,6 +58,7 @@ function App() {
         </button>
         <div id="principalId" className="mt-4 p-4 bg-gray-700 rounded-lg">Your PrincipalId: {principalId}</div>
         <section id="greeting" className="mt-4 text-lg font-semibold">{greeting}</section>
+        {principalId && <UploadNFT />}
       </div>
     </main>
   );
