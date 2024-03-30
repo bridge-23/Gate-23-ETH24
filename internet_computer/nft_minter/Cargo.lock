@@ -480,6 +480,7 @@ dependencies = [
  "getrandom",
  "hex",
  "ic-cdk",
+ "ic-cdk-macros",
  "ic-cdk-timers",
  "k256",
  "serde",

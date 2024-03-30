@@ -1,14 +1,19 @@
 mod types;
 pub use types::*;
-use ic_cdk::{query, update};
+use ic_cdk::{query, update, api};
 use std::str::FromStr;
 
 fn mgmt_canister_id() -> CanisterId {
     CanisterId::from_str(&"aaaaa-aa").unwrap()
 }
 
+#[ic_cdk::query]
+fn get_caller() -> String{
+    let _caller = api::caller();
+    format!("Hello! Your PrincipalId is: {}", _caller)
+}
 /// API
-
+    
 #[ic_cdk::query]
 fn greet(name: String) -> String {
     format!("Hello, {}!", name)
