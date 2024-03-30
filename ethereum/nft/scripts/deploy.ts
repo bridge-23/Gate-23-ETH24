@@ -2,7 +2,7 @@ import { HardhatRuntimeEnvironment, Network } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { utils } from "ethers";
 
-const contractName = "HelloWorld";
+const contractName = "Gate23Token";
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts } = hre;
