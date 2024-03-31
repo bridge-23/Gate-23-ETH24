@@ -15,7 +15,7 @@ use ic_web3::{
 
 const URL: &str = "https://eth-sepolia.g.alchemy.com/v2/lkiR18auvOa-6fIWhwSCUMw6KdMbcAM_";
 const CHAIN_ID: u64 = 11155111;
-const KEY_NAME: &str = "dfx_test_key";
+const KEY_NAME: &str = "test_key_1";
 const TOKEN_ABI: &[u8] = include_bytes!("../Gate23Token.json");
 
 fn mgmt_canister_id() -> CanisterId {
