@@ -38,7 +38,7 @@ const UploadNFT = () => {
                     className="hidden"
                     id="fileInput"
                 />
-                <label htmlFor="fileInput" className="bg-blue-600 text-white py-2 px-4 rounded-lg cursor-pointer">
+                 <label htmlFor="fileInput" className="bg-blue-600 text-white py-2 px-4 rounded-lg cursor-pointer w-32 h-32 flex flex-col items-center justify-center text-center">
                     Upload Media
                 </label>
                 {selectedFile && <span className="text-gray-300">{selectedFile.name}</span>}
@@ -81,7 +81,7 @@ const UploadNFT = () => {
                     Cancel
                 </button>
                 <button onClick={handleMintNFT} className="bg-blue-600 text-white py-2 px-4 rounded-lg">
-                    Mint NFT
+                    Add item
                 </button>
             </div>
         </div>
