@@ -43,7 +43,7 @@ const UploadNFT = () => {
                 </label>
                 {selectedFile && <span className="text-gray-300">{selectedFile.name}</span>}
             </div>
-
+            
             <input
                 type="text"
                 value={storeName}
