@@ -5,3 +5,5 @@ Our new Point of Sale Dapp, Gate23, removes the extra step of scanning your reci
 Unlike legacy POS models, our Dapp loads directly onto tablets.  And unlike other POS systems, which save data into nearly a dozen different databases, our data is streamlined into one crosschain NFT-based platform, built on ICP. 
 
 This allows users to provide more and better data to merchants, which earns them more money AND customized discounts from their farvorite merchants.  Our Gate23 software streamlines this process and is a win-win for customers and sellers alike.
+
+https://efy7f-aiaaa-aaaan-qmbta-cai.icp0.io/
