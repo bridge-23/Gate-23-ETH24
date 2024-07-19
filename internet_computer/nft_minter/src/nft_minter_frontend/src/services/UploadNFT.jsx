@@ -3,6 +3,7 @@ import { nanoid } from "nanoid";
 import { convertToDataURL } from "./image";
 import { resizeAndGrayscaleImage } from './resizeAndGrayscaleImage';
 import { nft_minter_backend } from "declarations/nft_minter_backend";
+import { CanisterStatus } from "@dfinity/agent";
 
 const UploadNFT = (props) => {
   const [storeName, setStoreName] = useState("");
@@ -13,7 +14,8 @@ const UploadNFT = (props) => {
   const [imageByteArray, setImageByteArray] = useState();
   const [imageLink, setImageLink] = useState("");
   const [uploadedDataURL, setUploadedDataURL] = useState("");
-
+  const [mintResult, setMintResult] = useState("");
+ 
   const reset = () => {
     setStoreName("");
     setProductName("");
@@ -45,26 +47,30 @@ const UploadNFT = (props) => {
   };
 
   const handleMintNFT = async () => {
+    const canisteId = import.meta.env.VITE_APP_CANISTER_ID;
+    console.log(canisteId)
     const docKey = nanoid();
     const imageResult = await nft_minter_backend.upload_image(
       docKey,
       imageByteArray
     );
-    const uploadedImageUrl = `https://tkuag-tqaaa-aaaak-akvgq-cai.raw.icp0.io/image/${imageResult}`;
+    const uploadedImageUrl = `https://${canisteId}.raw.icp0.io/image/${imageResult}`;
 
     const formData = {
       storeName,
       productName,
       productPrice: Number(productPrice),
-      quantity: Number(quantity),
       selectedFileName: selectedFile ? selectedFile.name : "",
       imageURL: uploadedImageUrl,
     };
     const jsonData = JSON.stringify(formData);
     const dataResult = await nft_minter_backend.upload_data(docKey, jsonData);
-    const uploadedDataUrl = `https://tkuag-tqaaa-aaaak-akvgq-cai.raw.icp0.io/receipt/${dataResult}`;
+    const uploadedDataUrl = `https://${canisteId}.raw.icp0.io/receipt/${dataResult}`;
     setUploadedDataURL(uploadedDataUrl);
+    const mintResult = await nft_minter_backend.mint_nft(props.address, uploadedDataUrl, Number(quantity));
     console.log("uploadedDataUrl: ", uploadedDataUrl);
+    console.log("mintResult", mintResult);
+    setMintResult(mintResult)
   };
 
   return (
@@ -144,6 +150,7 @@ const UploadNFT = (props) => {
         </button>
       </div>
       {uploadedDataURL && <p>Uploaded Data URL: <a href={uploadedDataURL} target="_blink" className="underline">{uploadedDataURL}</a></p>}
+      {mintResult && <p>Mint result: {mintResult}</p>}
     </div>
   );
 };

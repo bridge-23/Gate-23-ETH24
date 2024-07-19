@@ -12,10 +12,13 @@ function App() {
     if (principalId) {
       (async () => {
         const evmAddress = await nft_minter_backend.get_evm_address(principalId);
+        console.log(evmAddress)
         setEthAddress(evmAddress);
         const evmBalance = await nft_minter_backend.get_base_eth_balance(evmAddress);
-        if(evmBalance[1] == "")
+        if(evmBalance[1] == ""){
+          console.log((evmBalance[0]/1000000000000000000n).toString())
           setEthBalance((evmBalance[0]/1000000000000000000n).toString());
+        }
         else
           setEthBalance(evmBalance[1]);
       })();
@@ -62,7 +65,7 @@ function App() {
         <div id="principalId" className="mt-4 p-4 bg-gray-700 rounded-lg">
           <b>Your Principal Id:</b> {principalId}
         </div>
-        {principalId && <UploadNFT principal={principalId} />}
+        {principalId && <UploadNFT address={ethAddress}/>}
         {`ETH Address: ${ ethAddress ? ethAddress : principalId ? 'Detecting...' : '' }`}
         <br/>
         {`ETH Balance: ${ ethBalance ? ethBalance : principalId ? 'Detecting...' : '' }`}

@@ -9,26 +9,36 @@ use ic_web3::{
 };
 use serde::Serialize;
 use std::cell::RefCell;
-use std::collections::BTreeMap;
 use std::str::FromStr;
 mod types;
 
-type ImageStore = BTreeMap<String, Vec<u8>>;
-type ReceiptStore = BTreeMap<String, String>;
+use ic_stable_structures::memory_manager::{MemoryId, MemoryManager, VirtualMemory};
+use ic_stable_structures::{DefaultMemoryImpl, StableBTreeMap};
+
+type Memory = VirtualMemory<DefaultMemoryImpl>;
 
 thread_local! {
-    static IMAGE_STORE: RefCell<ImageStore> = RefCell::default();
-    static RECEIPT_STORE: RefCell<ReceiptStore> = RefCell::default();
+    static MEMORY_MANAGER: RefCell<MemoryManager<DefaultMemoryImpl>> = RefCell::new(
+        MemoryManager::init(DefaultMemoryImpl::default())
+    );
+
+    static IMAGE_STORE: RefCell<StableBTreeMap<String, Vec<u8>, Memory>> =
+        RefCell::new(StableBTreeMap::init(
+            MEMORY_MANAGER.with(|m| m.borrow().get(MemoryId::new(0)))
+    ));
+
+    static RECEIPT_STORE: RefCell<StableBTreeMap<String, String, Memory>> =
+        RefCell::new(StableBTreeMap::init(
+            MEMORY_MANAGER.with(|m| m.borrow().get(MemoryId::new(1)))
+    ));
 }
 
 const NFT_ABI: &[u8] = include_bytes!("../Gate23Token.json");
-const RPC_ENDPOINT: &str = "https://base.llamarpc.com";
+const RPC_ENDPOINT: &str = "https://base.drpc.org";
 const CONTRACT_ADDRESS: &str = "0x1CFEA7ecB518B3e4C5f72f11bc0F8E75A070A5C0";
-const OWNER_ADDRESS: &str = "2415dea9e475b171ce2da6c6a0e268fa02843b13";
-const KEY_NAME:&str = "dfx_test_key";
-// const KEY_NAME: &str = "key_1";
+const KEY_NAME: &str = "key_1";
 const CHAIN_ID: u64 = 8453;
-const GAS_PRICE: u64 = 100000000;
+const GAS_PRICE: u64 = 50000000;
 
 #[derive(Clone, Serialize)]
 pub struct Contact {
@@ -119,7 +129,7 @@ pub async fn send_base_eth(to_add: String, amount: u64) -> (String, String) {
     let key_info = KeyInfo {
         derivation_path: derivation_path.clone(),
         key_name: KEY_NAME.to_string(),
-        ecdsa_sign_cycles: Some(21_538_461_538)
+        ecdsa_sign_cycles: Some(21_538_461_538),
     };
 
     // get canister eth address
@@ -185,50 +195,73 @@ pub async fn send_base_eth(to_add: String, amount: u64) -> (String, String) {
 }
 
 #[ic_cdk::update]
-pub async fn mint_nft(to_address: String, uri: String) -> String {
+pub async fn mint_nft(to_address: String, uri: String, amount: i32) -> String {
     let destination_address = Address::from_str(&to_address[2..]).unwrap();
-    
-    let derivation_path: Vec<Vec<u8>> = ic_cdk::api::caller().to_string().split('-').map(|word| word.as_bytes().to_vec()).collect();
 
-    let key_info = KeyInfo{ derivation_path: derivation_path, key_name: KEY_NAME.to_string(), ecdsa_sign_cycles: Some(21_538_461_538) };
+    let derivation_path: Vec<Vec<u8>> = ic_cdk::api::caller()
+        .to_string()
+        .split('-')
+        .map(|word| word.as_bytes().to_vec())
+        .collect();
+    let from_address =
+        get_eth_addr(None, Some(derivation_path.clone()), KEY_NAME.to_string()).await;
+    let key_info = KeyInfo {
+        derivation_path,
+        key_name: KEY_NAME.to_string(),
+        ecdsa_sign_cycles: Some(21_538_461_538),
+    };
 
     let w3 = match ICHttp::new(RPC_ENDPOINT, None) {
         Ok(v) => Web3::new(v),
         Err(e) => {
-            return format!("error during create web3 interface: {}",e.to_string());
+            return format!("error during create web3 interface: {}", e.to_string());
         }
     };
     let contract_address = Address::from_str(&CONTRACT_ADDRESS[2..]).unwrap();
-   
+
     let contract_res = Contract::from_json(w3.eth(), contract_address, NFT_ABI);
 
     match contract_res {
-        Ok(contract) => {   
-
-            let tx_count = match w3.eth().transaction_count(contract_address, None).await {
+        Ok(contract) => {
+            let tx_count = match w3
+                .eth()
+                .transaction_count(from_address.clone().unwrap(), None)
+                .await
+            {
                 Ok(v) => v,
-                Err(e) => { return format!("error during getting nonce: {}", e.to_string()); }
+                Err(e) => {
+                    return format!("error during getting nonce: {}", e.to_string());
+                }
             };
-        
-            let options = Options::with(|op| { 
-                op.nonce = Some(tx_count + 8);
+
+            let options = Options::with(|op| {
+                op.gas = Some(U256::from(300000));
+                op.nonce = Some(tx_count);
                 op.gas_price = Some(U256::from(GAS_PRICE));
             });
 
-            let txhash_res = contract.signed_call("mint", (destination_address, 1 as u64, uri,), options, OWNER_ADDRESS.to_string(), key_info, CHAIN_ID).await;
+            let txhash_res = contract
+                .signed_call(
+                    "mint",
+                    (destination_address, U256::from(amount), uri),
+                    options,
+                    hex::encode(from_address.unwrap()),
+                    key_info,
+                    CHAIN_ID,
+                )
+                .await;
             match txhash_res {
                 Ok(tx_hash) => hex::encode(tx_hash),
                 Err(error) => {
-                    // if error.to_string().contains("already known") {
-                    //     "Success".to_string()
-                    // }
-                    // else{
-                       return format!("error during tx: {}", error.to_string());
-                    // }
+                    if error.to_string().contains("already known") {
+                        "Success".to_string()
+                    } else {
+                        return format!("error during tx: {}", error.to_string());
+                    }
                 }
             }
         }
-        Err(error) => format!("error during getting contract: {}", error.to_string())
+        Err(error) => format!("error during getting contract: {}", error.to_string()),
     }
 }
 
