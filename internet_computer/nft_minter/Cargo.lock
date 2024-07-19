@@ -703,6 +703,42 @@ dependencies = [
 ]
 
 [[package]]
+name = "ic-stable-memory"
+version = "0.4.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e35aaf578cae9f1c3f0d50742099bda5e5ee1f3c2cb29315233d0852cfc6067f"
+dependencies = [
+ "candid 0.8.4",
+ "ic-cdk 0.7.4",
+ "ic-stable-memory-derive",
+ "num-bigint",
+ "serde",
+ "serde_bytes",
+ "sha2 0.10.8",
+ "zwohash",
+]
+
+[[package]]
+name = "ic-stable-memory-derive"
+version = "0.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6fdb3a4f5e97e0d9a05fa6096214888c98ad405586c338fb99a7a6f608c7fee3"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
+]
+
+[[package]]
+name = "ic-stable-structures"
+version = "0.6.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "03f3044466a69802de74e710dc0300b706a05696a0531c942ca856751a13b0db"
+dependencies = [
+ "ic_principal",
+]
+
+[[package]]
 name = "ic-web3"
 version = "0.1.7"
 source = "git+https://github.com/rocklabs-io/ic-web3#c4b92878e0be0b38d25c46a526a6c4664a6e5ee8"
@@ -1031,6 +1067,8 @@ dependencies = [
  "http",
  "ic-cdk 0.13.1",
  "ic-cdk-timers",
+ "ic-stable-memory",
+ "ic-stable-structures",
  "ic-web3",
  "junobuild-utils",
  "serde",
@@ -1923,3 +1961,9 @@ checksum = "05f360fc0b24296329c78fda852a1e9ae82de9cf7b27dae4b7f62f118f77b9ed"
 dependencies = [
  "tap",
 ]
+
+[[package]]
+name = "zwohash"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "beaf63e0740cea93ca85de39611a8bc8262a50adacd6321cd209a123676d0447"

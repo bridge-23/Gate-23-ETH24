@@ -1,13 +1,7 @@
 use serde::Serialize;
-use candid::{CandidType, Func, Deserialize};
+use candid::{CandidType, Deserialize};
 
 use serde_bytes::ByteBuf;
-
-#[derive(Serialize, Deserialize, CandidType)]
-pub struct Image {
-    pub name: String,
-    pub img: Vec<u8>
-}
 
 #[derive(Clone, Debug, CandidType, Deserialize)]
 pub struct HttpRequest {
